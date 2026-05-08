@@ -53,4 +53,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/mmaarafi/data/mariadb
+      device: /home/mmaarafi/data/db
