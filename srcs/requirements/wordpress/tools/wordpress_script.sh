@@ -11,7 +11,7 @@ done
 if [ ! -f /var/www/wordpress/wp-config.php ]
 then
 	wp core download --path=/var/www/wordpress --allow-root
-	wp config create --allow-root --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb 
+	wp config create --allow-root --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --path=/var/www/wordpress
 	wp core install --path=/var/www/wordpress \
 				--url=https://${DOMAIN_NAME} \
 				--title="Inception" \

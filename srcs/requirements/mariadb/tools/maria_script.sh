@@ -3,22 +3,23 @@
 mkdir -p /run/mysqld
 chown -R mysql:mysql /run/mysqld
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql
-fi
+if [ ! -d "/var/lib/mysql/${MYSQL_DATABASE}" ]; then
 
-mysqld --user=mysql --skip-networking &
+	echo "Initializing MariaDB..."
+	mariadb-install-db --user=mysql --datadir=/var/lib/mysql > /dev/null
 
-sleep 3
-
-mysql -u root --socket=/run/mysqld/mysqld.sock << EOF
-CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
-CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
+	cat << EOF > /tmp/setup.sql
+USE mysql;
+FLUSH PRIVILEGES;
+CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;
+CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO \`${MYSQL_USER}\`@'%';
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 EOF
 
-mysqladmin -u root -p${MYSQL_ROOT_PASSWORD} --socket=/run/mysqld/mysqld.sock shutdown
-
+	mysqld --user=mysql --bootstrap < /tmp/setup.sql
+	rm -f /tmp/setup.sql
+	echo "Setup complete." 
+fi
 exec mysqld --user=mysql
