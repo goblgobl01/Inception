@@ -8,8 +8,10 @@ while ! mysqladmin ping -hmariadb -u$MYSQL_USER -p$MYSQL_PASSWORD --silent;
 do
 	sleep 1
 done
+echo "here 1"
 if [ ! -f /var/www/wordpress/wp-config.php ]
 then
+echo "here 2"
 	wp core download --path=/var/www/wordpress --allow-root
 	wp config create --allow-root --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --path=/var/www/wordpress
 	wp core install --path=/var/www/wordpress \
