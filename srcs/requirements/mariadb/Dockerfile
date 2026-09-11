@@ -1,13 +1,13 @@
 FROM debian:bookworm
 
 RUN apt-get update && apt-get install -y \
-    mariadb-server
+	mariadb-server
 
 COPY conf/config.cnf /etc/mysql/mariadb.conf.d/config.cnf
-COPY tools/script.sh /script.sh
+COPY tools/maria_script.sh /maria_script.sh
 
-RUN chmod +x /script.sh
+RUN chmod +x /maria_script.sh
 
 EXPOSE 3306
 
-CMD ["/script.sh"]
+CMD ["/maria_script.sh"]
